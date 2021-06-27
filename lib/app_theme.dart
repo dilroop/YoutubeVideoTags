@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
 
@@ -14,8 +15,7 @@ class AppTheme {
     ),
     backgroundColor: _darkColorScheme.background,
     accentColor: _darkColorScheme.secondary,
-
-
+    textTheme: _textTheme,
   );
 
   static const ColorScheme _darkColorScheme = ColorScheme(
@@ -33,5 +33,7 @@ class AppTheme {
     onError: Color(0xFFFAFAFA),
     brightness: Brightness.dark,
   );
+
+  static TextTheme _textTheme = GoogleFonts.firaSansTextTheme();
 
 }

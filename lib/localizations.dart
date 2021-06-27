@@ -30,6 +30,8 @@ class AppLocalizations {
 
   static String appName = 'Video Tags';
 
-  String get clickCountText => "you have clicked";
+  String get videoUrlHint => "youtube.com/watch?v=uVq4F-MrBGE";
+  String get videoUrlLabel => "Url";
+  String get loadVideoButtonText => "Go";
 
 }
