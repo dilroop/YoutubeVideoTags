@@ -43,11 +43,13 @@ class _MainScreen extends State<MainScreen> {
           style: GoogleFonts.damionTextTheme().headline4!.withSize(52),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [urlInputHeader(theme, localization)],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [urlInputHeader(theme, localization)],
+          ),
         ),
       ),
     );
@@ -86,15 +88,22 @@ class _MainScreen extends State<MainScreen> {
               ),
             ),
             TextButton(
-              onPressed: () {
-                print("FlatButton");
-              },
+              onPressed: () {},
               child: Text(
                 localization.loadVideoButtonText,
-                style: TextStyle(color: theme.colorScheme.onPrimary),
+                style: theme.textTheme.headline6?.withOnPrimary(context),
               ),
-              style: TextButton.styleFrom(
-                backgroundColor: theme.colorScheme.primary,
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                  (Set<MaterialState> states) {
+                    if (states.contains(MaterialState.disabled)) {
+                      return theme.colorScheme.primary.withAlpha(120);
+                    } else {
+                      return theme.colorScheme.primary;
+                    }
+                  }
+                ),
+
               ),
             ),
           ],
