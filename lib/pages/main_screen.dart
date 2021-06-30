@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:gradient_widgets/gradient_widgets.dart';
+import 'package:video_tags/pages/main_scree_state_notifier.dart';
 
 import '../extensions/text_style_extension.dart';
 import '../localizations.dart';
@@ -44,21 +46,31 @@ class _MainScreen extends State<MainScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [urlInputHeader(theme, localization)],
-          ),
+        child: Consumer(
+          builder: (context, watch, _) {
+            final state = watch(mainScreenProvider);
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [urlInputHeader(theme, localization, state)],
+              ),
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget urlInputHeader(ThemeData theme, AppLocalizations localization) {
+  Widget urlInputHeader(
+    ThemeData theme,
+    AppLocalizations localization,
+    MainScreenState state,
+  ) {
     TextEditingController controller = TextEditingController();
+    controller.text = state.url ?? "";
     return SizedBox(
-      height: 80,
+      height: 60,
       child: Card(
         color: theme.colorScheme.surface,
         child: Row(
@@ -76,6 +88,9 @@ class _MainScreen extends State<MainScreen> {
                     backgroundColor: theme.colorScheme.surface,
                     color: theme.colorScheme.onSurface,
                   ),
+                  onChanged: (newText) {
+                    context.read(mainScreenProvider.notifier).updateUrl(newText);
+                  },
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.all(16),
                     hintText: localization.videoUrlHint,
@@ -91,19 +106,7 @@ class _MainScreen extends State<MainScreen> {
               onPressed: () {},
               child: Text(
                 localization.loadVideoButtonText,
-                style: theme.textTheme.headline6?.withOnPrimary(context),
-              ),
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                  (Set<MaterialState> states) {
-                    if (states.contains(MaterialState.disabled)) {
-                      return theme.colorScheme.primary.withAlpha(120);
-                    } else {
-                      return theme.colorScheme.primary;
-                    }
-                  }
-                ),
-
+                style: theme.primaryTextTheme.headline6,
               ),
             ),
           ],
