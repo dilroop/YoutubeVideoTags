@@ -18,6 +18,7 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreen extends State<MainScreen> {
   late FocusNode editTextNode;
+  TextEditingController _controller = TextEditingController();
 
   @override
   void initState() {
@@ -45,69 +46,91 @@ class _MainScreen extends State<MainScreen> {
           style: GoogleFonts.damionTextTheme().headline4!.withSize(52),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [urlInputHeader(theme, localization)],
-          ),
-        ),
+      body: Consumer(
+        builder: (context, watch, _) {
+          final state = watch(mainScreenProvider);
+          var tags = state.tags ?? [];
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  urlInputHeader(theme, localization, state),
+                  SizedBox(
+                    height: 160,
+                    child: Card(
+                      color: theme.colorScheme.surface,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            child: Wrap(
+                              children: [...tags.map((tag) => Text(tag)).toList()],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget urlInputHeader(ThemeData theme, AppLocalizations localization) {
-    TextEditingController controller = TextEditingController();
-    return Consumer(
-      builder: (context, watch, _) {
-        final state = watch(mainScreenProvider);
-
-        return SizedBox(
-          height: 60,
-          child: Card(
-            color: theme.colorScheme.surface,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(
-                  child: Center(
-                    child: TextField(
-                      autofocus: true,
-                      maxLines: 1,
-                      controller: controller,
-                      focusNode: editTextNode,
-                      style: TextStyle(
-                        backgroundColor: theme.colorScheme.surface,
-                        color: theme.colorScheme.onSurface,
-                      ),
-                      onChanged: (newText) {
-                        context.read(mainScreenProvider.notifier).updateUrl(newText);
-                      },
-                      decoration: InputDecoration(
-                        contentPadding: EdgeInsets.all(16),
-                        hintText: localization.videoUrlHint,
-                        border: UnderlineInputBorder(
-                          borderSide: BorderSide.none,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                      ),
+  Widget urlInputHeader(ThemeData theme, AppLocalizations localization, MainScreenState state) {
+    return SizedBox(
+      height: 60,
+      child: Card(
+        color: theme.colorScheme.surface,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: Center(
+                child: TextField(
+                  autofocus: true,
+                  maxLines: 1,
+                  controller: _controller,
+                  focusNode: editTextNode,
+                  style: TextStyle(
+                    backgroundColor: theme.colorScheme.surface,
+                    color: theme.colorScheme.onSurface,
+                  ),
+                  onChanged: (newText) {
+                    context.read(mainScreenProvider.notifier).updateUrl(newText);
+                  },
+                  decoration: InputDecoration(
+                    contentPadding: EdgeInsets.all(16),
+                    hintText: localization.videoUrlHint,
+                    border: UnderlineInputBorder(
+                      borderSide: BorderSide.none,
+                      borderRadius: BorderRadius.circular(6),
                     ),
                   ),
                 ),
-                TextButton(
-                  onPressed: state.isUrlValid ? () {context.read(mainScreenProvider.notifier).loadTags();} : null,
-                  child: Text(
-                    localization.loadVideoButtonText,
-                    style: theme.primaryTextTheme.headline6,
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-        );
-      },
+            TextButton(
+              onPressed: state.isUrlValid
+                  ? () {
+                      context.read(mainScreenProvider.notifier).loadTags();
+                    }
+                  : null,
+              child: Text(
+                localization.loadVideoButtonText,
+                style: theme.primaryTextTheme.headline6,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

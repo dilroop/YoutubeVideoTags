@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:http/http.dart' as http;
 
@@ -12,9 +13,43 @@ class MainScreenViewModel extends StateNotifier<MainScreenState> {
   void loadTags() async {
     var url = Uri.parse(state.url!);
     var response = await http.get(url);
-    print(response.body);
+    var body = response.body;
+    var methodOneStart = "<meta name=\"keywords\" content=\"";
+    var methodOneEnd = "\">";
+
+    var methodTwoStart = "\"keywords\": [";
+    var methodTwoEnd = "]";
+
+    var methodOneResult = _getContentBetween(body, methodOneStart, methodOneEnd);
+    if (methodOneResult == null) {
+      var methodTwoResult = _getContentBetween(body, methodTwoStart, methodTwoEnd);
+      if (methodTwoResult == null) {
+        // handle failed case
+        // unable to find tags
+      } else {
+        var tags = methodTwoResult.split(",").map((tag) => tag.replaceAll("\"", "").trim()).toList();
+        _updateTags(tags);
+      }
+    } else {
+      var tags = methodOneResult.split(",").map((tag) => tag.trim()).toList();
+      _updateTags(tags);
+    }
+
     //<meta name="keywords" content="two minute papers, technology, science, fluid simulation, duck simulation, fluids">
     // "keywords": ["two minute papers", "technology", "science", "fluid simulation", "duck simulation", "fluids"],
+  }
+
+  void _updateTags(List<String> tags) {
+    print(tags.toString());
+    state = MainScreenState(url: state.url, tags: tags, isUrlValid: state.isUrlValid);
+  }
+
+  String? _getContentBetween(String lookIn, String start, String end) {
+    var startIndex = lookIn.indexOf(start) + start.length;
+    if (startIndex == -1) return null;
+    var endIndex = lookIn.indexOf(end, startIndex);
+    if (endIndex == -1) return null;
+    return lookIn.substring(startIndex, endIndex);
   }
 
   void updateUrl(String newText) {
