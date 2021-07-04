@@ -46,72 +46,68 @@ class _MainScreen extends State<MainScreen> {
         ),
       ),
       body: SingleChildScrollView(
-        child: Consumer(
-          builder: (context, watch, _) {
-            final state = watch(mainScreenProvider);
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [urlInputHeader(theme, localization, state)],
-              ),
-            );
-          },
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [urlInputHeader(theme, localization)],
+          ),
         ),
       ),
     );
   }
 
-  Widget urlInputHeader(
-    ThemeData theme,
-    AppLocalizations localization,
-    MainScreenState state,
-  ) {
+  Widget urlInputHeader(ThemeData theme, AppLocalizations localization) {
     TextEditingController controller = TextEditingController();
-    controller.text = state.url ?? "";
-    return SizedBox(
-      height: 60,
-      child: Card(
-        color: theme.colorScheme.surface,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: Center(
-                child: TextField(
-                  autofocus: true,
-                  maxLines: 1,
-                  controller: controller,
-                  focusNode: editTextNode,
-                  style: TextStyle(
-                    backgroundColor: theme.colorScheme.surface,
-                    color: theme.colorScheme.onSurface,
-                  ),
-                  onChanged: (newText) {
-                    context.read(mainScreenProvider.notifier).updateUrl(newText);
-                  },
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.all(16),
-                    hintText: localization.videoUrlHint,
-                    border: UnderlineInputBorder(
-                      borderSide: BorderSide.none,
-                      borderRadius: BorderRadius.circular(6),
+    return Consumer(
+      builder: (context, watch, _) {
+        final state = watch(mainScreenProvider);
+
+        return SizedBox(
+          height: 60,
+          child: Card(
+            color: theme.colorScheme.surface,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: Center(
+                    child: TextField(
+                      autofocus: true,
+                      maxLines: 1,
+                      controller: controller,
+                      focusNode: editTextNode,
+                      style: TextStyle(
+                        backgroundColor: theme.colorScheme.surface,
+                        color: theme.colorScheme.onSurface,
+                      ),
+                      onChanged: (newText) {
+                        context.read(mainScreenProvider.notifier).updateUrl(newText);
+                      },
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.all(16),
+                        hintText: localization.videoUrlHint,
+                        border: UnderlineInputBorder(
+                          borderSide: BorderSide.none,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
+                TextButton(
+                  onPressed: state.isUrlValid ? () {context.read(mainScreenProvider.notifier).loadTags();} : null,
+                  child: Text(
+                    localization.loadVideoButtonText,
+                    style: theme.primaryTextTheme.headline6,
+                  ),
+                ),
+              ],
             ),
-            TextButton(
-              onPressed: () {},
-              child: Text(
-                localization.loadVideoButtonText,
-                style: theme.primaryTextTheme.headline6,
-              ),
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

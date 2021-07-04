@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.dsb.videotags.video_tags">
-   <application
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
         android:label="video_tags"
         android:icon="@mipmap/ic_launcher">
         <activity
