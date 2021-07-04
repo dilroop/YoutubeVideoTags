@@ -9,13 +9,12 @@ final mainScreenProvider = StateNotifierProvider.autoDispose<MainScreenViewModel
 class MainScreenViewModel extends StateNotifier<MainScreenState> {
   MainScreenViewModel(MainScreenState state) : super(state);
 
-  Future<List<String>> loadTags() async {
+  void loadTags() async {
     var url = Uri.parse(state.url!);
     var response = await http.get(url);
     print(response.body);
     //<meta name="keywords" content="two minute papers, technology, science, fluid simulation, duck simulation, fluids">
     // "keywords": ["two minute papers", "technology", "science", "fluid simulation", "duck simulation", "fluids"],
-    return [];
   }
 
   void updateUrl(String newText) {
