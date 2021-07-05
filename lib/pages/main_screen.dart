@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:gradient_widgets/gradient_widgets.dart';
+import 'package:video_tags/app_theme.dart';
 import 'package:video_tags/pages/main_scree_state_notifier.dart';
 
 import '../extensions/text_style_extension.dart';
@@ -54,26 +55,52 @@ class _MainScreen extends State<MainScreen> {
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   urlInputHeader(theme, localization, state),
-                  SizedBox(
-                    height: 160,
-                    child: Card(
-                      color: theme.colorScheme.surface,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Expanded(
-                            child: Wrap(
-                              children: [...tags.map((tag) => Text(tag)).toList()],
+                  if (tags.isNotEmpty)
+                    GradientCard(
+                      gradient: AppTheme.darkGradient,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Wrap(
+                          runSpacing: -10,
+                          spacing: 2,
+                          children: [
+                            ...tags.map(
+                              (tag) {
+                                return Chip(
+                                  label: Text(
+                                    tag,
+                                    style: TextStyle(color: theme.colorScheme.primary),
+                                  ),
+                                  backgroundColor: theme.colorScheme.background,
+                                );
+                              },
                             ),
-                          ),
-                        ],
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Material(
+                                  borderRadius: BorderRadius.circular(80),
+                                  child: IconButton(
+                                    onPressed: () {},
+                                    icon: Icon(Icons.copy),
+                                    iconSize: 16,
+                                    highlightColor: theme.primaryColor,
+                                    splashColor: theme.primaryColor,
+                                    focusColor: theme.primaryColor,
+                                  ),
+                                  color: Colors.transparent,
+                                )
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                  ),
                 ],
               ),
             ),

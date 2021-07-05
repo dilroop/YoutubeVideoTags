@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
+  static LinearGradient darkGradient = LinearGradient(
+    colors: [Color(0xff212121), Color(0xff121212)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
   static ThemeData baseTheme = ThemeData(
       brightness: Brightness.dark,
       colorScheme: _darkColorScheme,
